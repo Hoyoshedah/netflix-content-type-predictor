@@ -15,16 +15,16 @@ Build a machine learning model that predicts if a Netflix title is a **Movie** o
 
 ## 3. Step 1: Select relevant features
 
-| Column | Decision | Reason |
-|---|---|---|
-| show_id, title | Dropped | Names and IDs, nothing to learn |
-| type | Target | What we predict |
-| duration | Dropped | Leaks the answer |
-| listed_in | Kept, cleaned | Removed "tv", "movies", "shows" |
-| country | Kept | First country, top 10 plus "Other" |
-| director | Kept as yes/no | Too many names, so "has a director" |
-| rating | Kept | |
-| release_year, date_added | Kept | Year and month |
+| Column                   | Decision       | Reason                              |
+| ------------------------ | -------------- | ----------------------------------- |
+| show_id, title           | Dropped        | Names and IDs, nothing to learn     |
+| type                     | Target         | What we predict                     |
+| duration                 | Dropped        | Leaks the answer                    |
+| listed_in                | Kept, cleaned  | Removed "tv", "movies", "shows"     |
+| country                  | Kept           | First country, top 10 plus "Other"  |
+| director                 | Kept as yes/no | Too many names, so "has a director" |
+| rating                   | Kept           |                                     |
+| release_year, date_added | Kept           | Year and month                      |
 
 ### The data leakage problem
 
@@ -63,12 +63,12 @@ Four models:
 
 Accuracy on the test set:
 
-| Model | Leaky | Honest | Strict |
-|---|---|---|---|
-| Logistic Regression | 1.000 | 0.989 | 0.948 |
-| Decision Tree | 1.000 | 0.978 | 0.918 |
-| Random Forest | 1.000 | 0.987 | 0.940 |
-| KNN | 0.994 | 0.971 | 0.939 |
+| Model               | Leaky | Honest | Strict |
+| ------------------- | ----- | ------ | ------ |
+| Logistic Regression | 1.000 | 0.989  | 0.948  |
+| Decision Tree       | 1.000 | 0.978  | 0.918  |
+| Random Forest       | 1.000 | 0.987  | 0.940  |
+| KNN                 | 0.994 | 0.971  | 0.939  |
 
 Baseline: 0.697.
 
@@ -76,10 +76,10 @@ For the best strict model (Logistic Regression): precision 0.933, recall 0.893, 
 
 **Confusion matrix** (`screenshots/05_confusion_matrix.png`):
 
-| | Predicted Movie | Predicted TV Show |
-|---|---|---|
-| Real Movie | 1,191 | 34 |
-| Real TV Show | 57 | 476 |
+|              | Predicted Movie | Predicted TV Show |
+| ------------ | --------------- | ----------------- |
+| Real Movie   | 1,191           | 34                |
+| Real TV Show | 57              | 476               |
 
 The model's most common mistake is calling a TV Show a Movie (57 times).
 
@@ -102,13 +102,12 @@ The Random Forest feature chart (`screenshots/06_feature_importance.png`) shows 
 
 ## 10. What I learned
 
-*(Rewrite this part in your own words before submitting.)*
-
-- What data leakage is and how to spot it
-- Why accuracy alone can mislead when classes are unequal, and why a baseline matters
-- How to turn words into numbers with one-hot encoding
-- Why we split data into training and test parts, and what cross-validation adds
-- How four different models make decisions, and how to compare them fairly
+- Data leakage: I found that the duration column gave the answer away. Every movie says "min" and every TV show says "Season", so a model could get 100% without really learning. I removed it and tested again to get a fair result.
+- Baseline:About 70% of the titles are movies, so a model that always says "Movie" is already 70% right. This taught me that accuracy alone can fool you, and that a model must beat the baseline.
+- Encoding: Models only understand numbers. I used one-hot encoding to turn ratings and countries into 0 and 1 columns. I did not use 1, 2, 3, because that would make the model think one rating is bigger than another.
+- Train and test split: I kept 20% of the titles hidden while the model learned, then used them like an exam. This shows how the model does on titles it has never seen.
+- Comparing models: I trained four models. They scored close to each other, and Logistic Regression was the best by a small amount. Cross-validation gave nearly the same numbers, so I trust the result.
+- A surprise: The most important feature was whether a title has a director listed. In this dataset many TV shows have no director, so this is a quirk of the data and not a rule about TV.
 
 ## 11. Files
 
